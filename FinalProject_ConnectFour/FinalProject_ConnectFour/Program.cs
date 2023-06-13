@@ -10,7 +10,7 @@ public class ConnectFour
 
     public ConnectFour()
     {
-        
+        currentPlayer = 'X'; 
     }
 
    
