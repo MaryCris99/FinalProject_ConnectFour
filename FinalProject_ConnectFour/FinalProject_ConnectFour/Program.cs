@@ -7,6 +7,7 @@ public class ConnectFour
     private bool gameOver;
     private const int Rows = 6;
     private const int Columns = 7;
+    private char [,] board;
 
     public ConnectFour()
     {
@@ -21,8 +22,10 @@ public class ConnectFour
     {
         Console.WriteLine("**********Welcome to Connect Four!************");
 
-        //if statement
-
+      while (!gameOver)
+          DisplayBoard();
+        
+       ---Is statement here
 
             else
             {
