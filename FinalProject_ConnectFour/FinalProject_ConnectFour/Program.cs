@@ -12,6 +12,7 @@ public class ConnectFour
     {
         currentPlayer = 'X'; 
         gameOver= false;
+        board = new char[Rows, Columns]; // Adding board for Rows and Columns
     }
 
    
