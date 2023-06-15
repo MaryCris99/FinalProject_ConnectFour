@@ -15,27 +15,43 @@ public class ConnectFour
         gameOver= false;
         board = new char[Rows, Columns]; // Adding board for Rows and Columns
     }
-
-   
-
     public void Play()
     {
-        Console.WriteLine("**********Welcome to Connect Four!************");
+        Console.WriteLine("Welcome to Connect Four!");
 
-      while (!gameOver)
-          DisplayBoard();
-        
-       ---Is statement here
+        while (!gameOver)
+        {
+            DisplayBoard();
+            int column = GetValidColumn();
 
+            if (MakeMove(column))
+            {
+                if (CheckWin(currentPlayer))
+                {
+                    DisplayBoard();
+                    Console.WriteLine($"Player {currentPlayer} wins!");
+                    gameOver = true;
+                }
+                else if (CheckDraw())
+                {
+                    DisplayBoard();
+                    Console.WriteLine("It's a draw!");
+                    gameOver = true;
+                }
+                else
+                {
+                    SwitchPlayer();
+                }
+            }
             else
             {
-                Console.WriteLine("Invalid move! Please try again.");
+                Console.WriteLine("Invalid move. Please try again.");
             }
         }
 
         Console.WriteLine("Thanks for playing Connect Four!");
     }
-
+    
     private void Display()
     {
         
