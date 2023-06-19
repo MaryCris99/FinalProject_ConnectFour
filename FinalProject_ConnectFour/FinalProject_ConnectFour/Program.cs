@@ -1,20 +1,32 @@
-﻿using System;
+using System;
 
 public class ConnectFour
 {
-    
-    private char currentPlayer;
-    private bool gameOver;
     private const int Rows = 6;
     private const int Columns = 7;
-    private char [,] board;
+    private char[,] board;
+    private char currentPlayer;
+    private bool gameOver;
 
     public ConnectFour()
     {
-        currentPlayer = 'X'; 
-        gameOver= false;
-        board = new char[Rows, Columns]; // Adding board for Rows and Columns
+        board = new char[Rows, Columns];
+        currentPlayer = 'X';
+        gameOver = false;
+        InitializeBoard();
     }
+
+    private void InitializeBoard()
+    {
+        for (int row = 0; row < Rows; row++)
+        {
+            for (int col = 0; col < Columns; col++)
+            {
+                board[row, col] = ' ';
+            }
+        }
+    }
+
     public void Play()
     {
         Console.WriteLine("Welcome to Connect Four!");
@@ -51,8 +63,8 @@ public class ConnectFour
 
         Console.WriteLine("Thanks for playing Connect Four!");
     }
-    
-    private void Display()
+
+    private void DisplayBoard()
     {
         Console.WriteLine();
         for (int row = Rows - 1; row >= 0; row--)
@@ -69,9 +81,9 @@ public class ConnectFour
         Console.WriteLine();
     }
 
-    private int GetColumn()
+    private int GetValidColumn()
     {
-         int column;
+        int column;
         while (true)
         {
             Console.Write($"Player {currentPlayer}, enter a column (1-{Columns}): ");
@@ -86,33 +98,97 @@ public class ConnectFour
 
     private bool MakeMove(int column)
     {
-        //if else statement, 
+        for (int row = 0; row < Rows; row++)
+        {
+            if (board[row, column] == ' ')
+            {
+                board[row, column] = currentPlayer;
+                return true;
+            }
+        }
+        return false; // Column is full
     }
 
     private bool CheckWin(char player)
     {
         // Check horizontal
-        
+        for (int row = 0; row < Rows; row++)
+        {
+            for (int col = 0; col <= Columns - 4; col++)
+            {
+                if (board[row, col] == player &&
+                    board[row, col + 1] == player &&
+                    board[row, col + 2] == player &&
+                    board[row, col + 3] == player)
+                {
+                    return true;
+                }
+            }
+        }
 
         // Check vertical
-       
-        
+        for (int row = 0; row <= Rows - 4; row++)
+        {
+            for (int col = 0; col < Columns; col++)
+            {
+                if (board[row, col] == player &&
+                    board[row + 1, col] == player &&
+                    board[row + 2, col] == player &&
+                    board[row + 3, col] == player)
+                {
+                    return true;
+                }
+            }
+        }
 
-        // Check diagonal 
-        
-        
+        // Check diagonal (top-left to bottom-right)
+        for (int row = 0; row <= Rows - 4; row++)
+        {
+            for (int col = 0; col <= Columns - 4; col++)
+            {
+                if (board[row, col] == player &&
+                    board[row + 1, col + 1] == player &&
+                    board[row + 2, col + 2] == player &&
+                    board[row + 3, col + 3] == player)
+                {
+                    return true;
+                }
+            }
+        }
 
-       // return false;
+        // Check diagonal (bottom-left to top-right)
+        for (int row = 3; row < Rows; row++)
+        {
+            for (int col = 0; col <= Columns - 4; col++)
+            {
+                if (board[row, col] == player &&
+                    board[row - 1, col + 1] == player &&
+                    board[row - 2, col + 2] == player &&
+                    board[row - 3, col + 3] == player)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     private bool CheckDraw()
     {
-        //check draw
+        for (int col = 0; col < Columns; col++)
+        {
+            if (board[Rows - 1, col] == ' ')
+            {
+                return false; // There is an empty cell, game is not a draw
+            }
+        }
+        return true; // All cells are filled, game is a draw
     }
 
     private void SwitchPlayer()
     {
-        //switch player
+        currentPlayer = currentPlayer == 'X' ? 'O' : 'X';
     }
 }
 
@@ -120,6 +196,7 @@ class Program
 {
     static void Main(string[] args)
     {
-        //Play();
+        ConnectFour game = new ConnectFour();
+        game.Play();
     }
 }
