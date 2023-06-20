@@ -1,40 +1,86 @@
 using System;
 
-public class ConnectFour
+interface IPlayer //Interface for a player
 {
-    private const int Rows = 6;
-    private const int Columns = 7;
-    private char[,] board;
-    private char currentPlayer;
-    private bool gameOver;
+    int PlayMove();
+}
 
-    public ConnectFour()
+abstract class Player : IPlayer
+{
+    protected char symbol;
+
+    public Player(char symbol)
     {
-        board = new char[Rows, Columns];
-        currentPlayer = 'X';
-        gameOver = false;
-        InitializeBoard();
+        this.symbol = symbol;
+    }
+    public abstract int PlayMove();
+}
+
+class HumanPlayer : Player
+{
+    public HumanPlayer(string v, char symbol): base(symbol)
+    {
+
     }
 
-    private void InitializeBoard()
+    public override int PlayMove()
+   
     {
-        for (int row = 0; row < Rows; row++)
+        int column;
+        int Columns = 7;
+
+        while (true)
         {
-            for (int col = 0; col < Columns; col++)
+            Console.Write($"Player {symbol}, enter a column (1-{Columns}): ");
+            string input = Console.ReadLine();
+            if (int.TryParse(input, out column) && column >= 1 && column <= Columns)
+            {
+                return column - 1; // Subtract 1 to convert to 0-based index
+            }
+            Console.WriteLine("Invalid column. Please try again.");
+        }
+
+    }
+}
+
+//Connect Four Game Class
+class ConnectFour
+{
+    private char[,] board;
+    private Player player1;
+    private Player player2;
+    private bool gameOver;
+
+    public ConnectFour(Player player1, Player player2)
+    {
+        board = new char[6, 7];
+        this.player1 = player1;
+        this.player2 = player2;
+        gameOver = false;
+        //InitializeBoard();
+    }
+
+    /*private void InitializeBoard()
+    {
+        for (int row = 0; row < 6; row++)
+        {
+            for (int col = 0; col < 7; col++)
             {
                 board[row, col] = ' ';
             }
         }
-    }
+    }*/
 
-    public void Play()
+    public void PlayGame()
     {
         Console.WriteLine("Welcome to Connect Four!");
+        Player currentPlayer = player1;
+        
+       
 
         while (!gameOver)
         {
-            DisplayBoard();
-            int column = GetValidColumn();
+            int column = currentPlayer.PlayMove();
 
             if (MakeMove(column))
             {
@@ -67,10 +113,10 @@ public class ConnectFour
     private void DisplayBoard()
     {
         Console.WriteLine();
-        for (int row = Rows - 1; row >= 0; row--)
+        for (int row = 6 - 1; row >= 0; row--)
         {
             Console.Write("|");
-            for (int col = 0; col < Columns; col++)
+            for (int col = 0; col < 7; col++)
             {
                 Console.Write($"{board[row, col]}|");
             }
@@ -81,7 +127,7 @@ public class ConnectFour
         Console.WriteLine();
     }
 
-    private int GetValidColumn()
+    /*private int GetValidColumn()
     {
         int column;
         while (true)
@@ -94,11 +140,11 @@ public class ConnectFour
             }
             Console.WriteLine("Invalid column. Please try again.");
         }
-    }
+    }*/
 
     private bool MakeMove(int column)
     {
-        for (int row = 0; row < Rows; row++)
+        for (int row = 0; row < 6; row++)
         {
             if (board[row, column] == ' ')
             {
@@ -112,9 +158,9 @@ public class ConnectFour
     private bool CheckWin(char player)
     {
         // Check horizontal
-        for (int row = 0; row < Rows; row++)
+        for (int row = 0; row < 6; row++)
         {
-            for (int col = 0; col <= Columns - 4; col++)
+            for (int col = 0; col <= 7 - 4; col++)
             {
                 if (board[row, col] == player &&
                     board[row, col + 1] == player &&
@@ -127,9 +173,9 @@ public class ConnectFour
         }
 
         // Check vertical
-        for (int row = 0; row <= Rows - 4; row++)
+        for (int row = 0; row <= 6 - 4; row++)
         {
-            for (int col = 0; col < Columns; col++)
+            for (int col = 0; col < 7; col++)
             {
                 if (board[row, col] == player &&
                     board[row + 1, col] == player &&
@@ -142,9 +188,9 @@ public class ConnectFour
         }
 
         // Check diagonal (top-left to bottom-right)
-        for (int row = 0; row <= Rows - 4; row++)
+        for (int row = 0; row <= 6 - 4; row++)
         {
-            for (int col = 0; col <= Columns - 4; col++)
+            for (int col = 0; col <= 7 - 4; col++)
             {
                 if (board[row, col] == player &&
                     board[row + 1, col + 1] == player &&
@@ -157,9 +203,9 @@ public class ConnectFour
         }
 
         // Check diagonal (bottom-left to top-right)
-        for (int row = 3; row < Rows; row++)
+        for (int row = 3; row < 6; row++)
         {
-            for (int col = 0; col <= Columns - 4; col++)
+            for (int col = 0; col <= 7 - 4; col++)
             {
                 if (board[row, col] == player &&
                     board[row - 1, col + 1] == player &&
@@ -176,9 +222,9 @@ public class ConnectFour
 
     private bool CheckDraw()
     {
-        for (int col = 0; col < Columns; col++)
+        for (int col = 0; col < 7; col++)
         {
-            if (board[Rows - 1, col] == ' ')
+            if (board[6 - 1, col] == ' ')
             {
                 return false; // There is an empty cell, game is not a draw
             }
@@ -188,7 +234,7 @@ public class ConnectFour
 
     private void SwitchPlayer()
     {
-        currentPlayer = currentPlayer == 'X' ? 'O' : 'X';
+        player1 = v == 'X' ? 'O' : 'X';
     }
 }
 
@@ -196,7 +242,8 @@ class Program
 {
     static void Main(string[] args)
     {
-        ConnectFour game = new ConnectFour();
-        game.Play();
+        Player player1 = new HumanPlayer("Player 1", 'X');
+        ConnectFour game = new ConnectFour(player1);
+        game.PlayGame();
     }
 }
