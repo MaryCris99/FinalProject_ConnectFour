@@ -39,7 +39,7 @@ class HumanPlayer1 : Player
 
     public override int PlayMove()
     {
-        Console.WriteLine($"[{name}], it's your turn ({symbol}). Enter the column number to drop your piece:");
+        Console.WriteLine($"[{name}], it's your turn ({symbol}). Enter a column (1-7)::");
         int column = Convert.ToInt32(Console.ReadLine());
         return column;
     }
