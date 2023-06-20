@@ -39,7 +39,7 @@ class HumanPlayer1 : Player
 
     public override int PlayMove()
     {
-        Console.WriteLine($"[{name}], it's your turn (symbol: {symbol}). Enter the column number to drop your piece:");
+        Console.WriteLine($"[{name}], it's your turn ({symbol}). Enter the column number to drop your piece:");
         int column = Convert.ToInt32(Console.ReadLine());
         return column;
     }
@@ -54,7 +54,7 @@ class HumanPlayer2 : Player
 
     public override int PlayMove()
     {
-        Console.WriteLine($"[{name}], it's your turn (symbol: {symbol}). Enter the column number to drop your piece:");
+        Console.WriteLine($"[{name}], it's your turn ({symbol}). Enter the column number to drop your piece:");
         int column = Convert.ToInt32(Console.ReadLine());
         return column;
     }
@@ -78,8 +78,7 @@ class ConnectFour
 
     public void StartGame()
     {
-        Console.WriteLine("===== CONNECT FOUR =====");
-        Console.WriteLine("Welcome to Connect Four!");
+        Console.WriteLine("Welcome to Connect Four Game!");
 
         Player currentPlayer = player1;
         int moveCount = 0;
@@ -141,7 +140,7 @@ class ConnectFour
     {
         int count = 0;
 
-        // Check horizontally
+        // Check horizontally for a win
         for (int c = 0; c < 7; c++)
         {
             if (board[row, c] == symbol)
@@ -153,7 +152,7 @@ class ConnectFour
                 return true;
         }
 
-        // Check vertically
+        // Check vertically for a win
         count = 0;
         for (int r = 0; r < 6; r++)
         {
@@ -166,7 +165,7 @@ class ConnectFour
                 return true;
         }
 
-        // Check diagonals (top-left to bottom-right)
+        // Check diagonals (top-left to bottom-right) for a win
         count = 0;
         int startRow = row - Math.Min(row, column - 1);
         int startColumn = column - 1 - Math.Min(row, column - 1);
@@ -181,7 +180,7 @@ class ConnectFour
                 return true;
         }
 
-        // Check diagonals (top-right to bottom-left)
+        // Check diagonals (top-right to bottom-left) for a win
         count = 0;
         startRow = row - Math.Min(row, 6 - column);
         startColumn = column - 1 + Math.Min(row, 6 - column);
@@ -222,6 +221,13 @@ class ConnectFour
             }
             Console.WriteLine();
         }
+        Console.WriteLine("--------------");
+        for (int col = 0; col < 7; col++)
+        {
+            Console.Write((col + 1) + " ");
+        }
+        Console.WriteLine();
+
     }
 }
 
