@@ -54,7 +54,7 @@ class HumanPlayer2 : Player
 
     public override int PlayMove()
     {
-        Console.WriteLine($"[{name}], it's your turn ({symbol}). Enter the column number to drop your piece:");
+        Console.WriteLine($"[{name}], it's your turn ({symbol}). Enter a column (1-7)::");
         int column = Convert.ToInt32(Console.ReadLine());
         return column;
     }
@@ -78,7 +78,7 @@ class ConnectFour
 
     public void StartGame()
     {
-        Console.WriteLine("Welcome to Connect Four Game!");
+        Console.WriteLine("*****Welcome to Connect Four Game!*****");
 
         Player currentPlayer = player1;
         int moveCount = 0;
@@ -86,11 +86,11 @@ class ConnectFour
         while (!gameOver)
         {
             Console.WriteLine("\nCurrent Board:");
-            PrintBoard();
+            DisplayBoard();
 
             int column = currentPlayer.PlayMove();
 
-            if (IsValidMove(column))
+            if (MakeMove(column))
             {
                 int row = DropPiece(column, currentPlayer.Symbol);
                 if (IsWinningMove(row, column, currentPlayer.Symbol))
@@ -118,7 +118,7 @@ class ConnectFour
         Console.WriteLine("\nGame Over.");
     }
 
-    private bool IsValidMove(int column)
+    private bool MakeMove(int column)
     {
         return column >= 1 && column <= 7 && board[0, column - 1] == '\0';
     }
@@ -211,13 +211,14 @@ class ConnectFour
         return true;
     }
 
-    private void PrintBoard()
+    private void DisplayBoard()
     {
         for (int r = 0; r < 6; r++)
         {
+            Console.Write("|");
             for (int c = 0; c < 7; c++)
             {
-                Console.Write(board[r, c] + " ");
+                Console.Write(board[r, c] + "|");
             }
             Console.WriteLine();
         }
