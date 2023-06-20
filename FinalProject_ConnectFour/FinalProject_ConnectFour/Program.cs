@@ -1,49 +1,66 @@
 using System;
 
-interface IPlayer //Interface for a player
+// Interface for a player
+interface IPlayer
 {
     int PlayMove();
 }
 
+// Base class for a player
 abstract class Player : IPlayer
 {
+    protected string name;
     protected char symbol;
 
-    public Player(char symbol)
+    protected internal string Name
     {
+        get { return name; }
+    }
+    protected internal char Symbol
+    {
+        get { return symbol; }
+    }
+
+    public Player(string name, char symbol)
+    {
+        this.name = name;
         this.symbol = symbol;
     }
+
     public abstract int PlayMove();
 }
 
-class HumanPlayer : Player
+// Human player 1 class inheriting from Player
+class HumanPlayer1 : Player
 {
-    public HumanPlayer(string v, char symbol): base(symbol)
+    public HumanPlayer1(string name, char symbol) : base(name, symbol)
     {
-
     }
 
     public override int PlayMove()
-   
     {
-        int column;
-        int Columns = 7;
-
-        while (true)
-        {
-            Console.Write($"Player {symbol}, enter a column (1-{Columns}): ");
-            string input = Console.ReadLine();
-            if (int.TryParse(input, out column) && column >= 1 && column <= Columns)
-            {
-                return column - 1; // Subtract 1 to convert to 0-based index
-            }
-            Console.WriteLine("Invalid column. Please try again.");
-        }
-
+        Console.WriteLine($"[{name}], it's your turn (symbol: {symbol}). Enter the column number to drop your piece:");
+        int column = Convert.ToInt32(Console.ReadLine());
+        return column;
     }
 }
 
-//Connect Four Game Class
+// Human player 2 class inheriting from Player
+class HumanPlayer2 : Player
+{
+    public HumanPlayer2(string name, char symbol) : base(name, symbol)
+    {
+    }
+
+    public override int PlayMove()
+    {
+        Console.WriteLine($"[{name}], it's your turn (symbol: {symbol}). Enter the column number to drop your piece:");
+        int column = Convert.ToInt32(Console.ReadLine());
+        return column;
+    }
+}
+
+// Connect Four game class
 class ConnectFour
 {
     private char[,] board;
@@ -57,48 +74,40 @@ class ConnectFour
         this.player1 = player1;
         this.player2 = player2;
         gameOver = false;
-        //InitializeBoard();
     }
 
-    /*private void InitializeBoard()
+    public void StartGame()
     {
-        for (int row = 0; row < 6; row++)
-        {
-            for (int col = 0; col < 7; col++)
-            {
-                board[row, col] = ' ';
-            }
-        }
-    }*/
-
-    public void PlayGame()
-    {
+        Console.WriteLine("===== CONNECT FOUR =====");
         Console.WriteLine("Welcome to Connect Four!");
+
         Player currentPlayer = player1;
-        
-       
+        int moveCount = 0;
 
         while (!gameOver)
         {
+            Console.WriteLine("\nCurrent Board:");
+            PrintBoard();
+
             int column = currentPlayer.PlayMove();
 
-            if (MakeMove(column))
+            if (IsValidMove(column))
             {
-                if (CheckWin(currentPlayer))
+                int row = DropPiece(column, currentPlayer.Symbol);
+                if (IsWinningMove(row, column, currentPlayer.Symbol))
                 {
-                    DisplayBoard();
-                    Console.WriteLine($"Player {currentPlayer} wins!");
+                    Console.WriteLine($"\n[{currentPlayer.Name}] Wins! Congratulations!");
                     gameOver = true;
                 }
-                else if (CheckDraw())
+                else if (IsBoardFull())
                 {
-                    DisplayBoard();
-                    Console.WriteLine("It's a draw!");
+                    Console.WriteLine("\nThe game is a draw.");
                     gameOver = true;
                 }
                 else
                 {
-                    SwitchPlayer();
+                    currentPlayer = (currentPlayer == player1) ? player2 : player1;
+                    moveCount++;
                 }
             }
             else
@@ -107,143 +116,124 @@ class ConnectFour
             }
         }
 
-        Console.WriteLine("Thanks for playing Connect Four!");
+        Console.WriteLine("\nGame Over.");
     }
 
-    private void DisplayBoard()
+    private bool IsValidMove(int column)
     {
-        Console.WriteLine();
-        for (int row = 6 - 1; row >= 0; row--)
-        {
-            Console.Write("|");
-            for (int col = 0; col < 7; col++)
-            {
-                Console.Write($"{board[row, col]}|");
-            }
-            Console.WriteLine();
-        }
-        Console.WriteLine("---------------");
-        Console.WriteLine(" 1 2 3 4 5 6 7");
-        Console.WriteLine();
+        return column >= 1 && column <= 7 && board[0, column - 1] == '\0';
     }
 
-    /*private int GetValidColumn()
+    private int DropPiece(int column, char symbol)
     {
-        int column;
-        while (true)
+        for (int row = 5; row >= 0; row--)
         {
-            Console.Write($"Player {currentPlayer}, enter a column (1-{Columns}): ");
-            string input = Console.ReadLine();
-            if (int.TryParse(input, out column) && column >= 1 && column <= Columns)
+            if (board[row, column - 1] == '\0')
             {
-                return column - 1; // Subtract 1 to convert to 0-based index
+                board[row, column - 1] = symbol;
+                return row;
             }
-            Console.WriteLine("Invalid column. Please try again.");
         }
-    }*/
+        return -1;
+    }
 
-    private bool MakeMove(int column)
+    private bool IsWinningMove(int row, int column, char symbol)
     {
-        for (int row = 0; row < 6; row++)
+        int count = 0;
+
+        // Check horizontally
+        for (int c = 0; c < 7; c++)
         {
-            if (board[row, column] == ' ')
-            {
-                board[row, column] = currentPlayer;
+            if (board[row, c] == symbol)
+                count++;
+            else
+                count = 0;
+
+            if (count >= 4)
                 return true;
-            }
-        }
-        return false; // Column is full
-    }
-
-    private bool CheckWin(char player)
-    {
-        // Check horizontal
-        for (int row = 0; row < 6; row++)
-        {
-            for (int col = 0; col <= 7 - 4; col++)
-            {
-                if (board[row, col] == player &&
-                    board[row, col + 1] == player &&
-                    board[row, col + 2] == player &&
-                    board[row, col + 3] == player)
-                {
-                    return true;
-                }
-            }
         }
 
-        // Check vertical
-        for (int row = 0; row <= 6 - 4; row++)
+        // Check vertically
+        count = 0;
+        for (int r = 0; r < 6; r++)
         {
-            for (int col = 0; col < 7; col++)
-            {
-                if (board[row, col] == player &&
-                    board[row + 1, col] == player &&
-                    board[row + 2, col] == player &&
-                    board[row + 3, col] == player)
-                {
-                    return true;
-                }
-            }
+            if (board[r, column - 1] == symbol)
+                count++;
+            else
+                count = 0;
+
+            if (count >= 4)
+                return true;
         }
 
-        // Check diagonal (top-left to bottom-right)
-        for (int row = 0; row <= 6 - 4; row++)
+        // Check diagonals (top-left to bottom-right)
+        count = 0;
+        int startRow = row - Math.Min(row, column - 1);
+        int startColumn = column - 1 - Math.Min(row, column - 1);
+        for (int r = startRow, c = startColumn; r < 6 && c < 7; r++, c++)
         {
-            for (int col = 0; col <= 7 - 4; col++)
-            {
-                if (board[row, col] == player &&
-                    board[row + 1, col + 1] == player &&
-                    board[row + 2, col + 2] == player &&
-                    board[row + 3, col + 3] == player)
-                {
-                    return true;
-                }
-            }
+            if (board[r, c] == symbol)
+                count++;
+            else
+                count = 0;
+
+            if (count >= 4)
+                return true;
         }
 
-        // Check diagonal (bottom-left to top-right)
-        for (int row = 3; row < 6; row++)
+        // Check diagonals (top-right to bottom-left)
+        count = 0;
+        startRow = row - Math.Min(row, 6 - column);
+        startColumn = column - 1 + Math.Min(row, 6 - column);
+        for (int r = startRow, c = startColumn; r < 6 && c >= 0; r++, c--)
         {
-            for (int col = 0; col <= 7 - 4; col++)
-            {
-                if (board[row, col] == player &&
-                    board[row - 1, col + 1] == player &&
-                    board[row - 2, col + 2] == player &&
-                    board[row - 3, col + 3] == player)
-                {
-                    return true;
-                }
-            }
+            if (board[r, c] == symbol)
+                count++;
+            else
+                count = 0;
+
+            if (count >= 4)
+                return true;
         }
 
         return false;
     }
 
-    private bool CheckDraw()
+    private bool IsBoardFull()
     {
-        for (int col = 0; col < 7; col++)
+        for (int r = 0; r < 6; r++)
         {
-            if (board[6 - 1, col] == ' ')
+            for (int c = 0; c < 7; c++)
             {
-                return false; // There is an empty cell, game is not a draw
+                if (board[r, c] == '\0')
+                    return false;
             }
         }
-        return true; // All cells are filled, game is a draw
+        return true;
     }
 
-    private void SwitchPlayer()
+    private void PrintBoard()
     {
-        player1 = v == 'X' ? 'O' : 'X';
+        for (int r = 0; r < 6; r++)
+        {
+            for (int c = 0; c < 7; c++)
+            {
+                Console.Write(board[r, c] + " ");
+            }
+            Console.WriteLine();
+        }
     }
 }
 
+// Main program
 class Program
 {
     static void Main(string[] args)
     {
-        Player player1 = new HumanPlayer("Player 1", 'X');
-        ConnectFour game = new ConnectFour(player1);
-        game.PlayGame();
+        Player player1 = new HumanPlayer1("Player 1", 'X');
+        Player player2 = new HumanPlayer2("Player 2", 'O');
+
+        ConnectFour game = new ConnectFour(player1, player2);
+        game.StartGame();
     }
 }
