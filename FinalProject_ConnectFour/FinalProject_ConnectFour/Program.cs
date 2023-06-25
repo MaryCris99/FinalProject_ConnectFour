@@ -1,7 +1,7 @@
 using System;
 
 // Interface for a player
-interface IPlayer 
+interface IPlayer
 {
     int PlayMove();// This method is declared as an abstract method, meaning it does not have an implementation in the base class. 
 }
@@ -38,7 +38,7 @@ abstract class Player : IPlayer // define an abstract base class "Player" that i
 class HumanPlayer1 : Player
 {
     //calling the base class constructor using the base (name,symbol) to initialize the name and symbol of the player.
-    public HumanPlayer1(string name, char symbol) : base(name, symbol) 
+    public HumanPlayer1(string name, char symbol) : base(name, symbol)
     {
     }
 
@@ -79,9 +79,9 @@ class ConnectFour
         this.player1 = player1;
         this.player2 = player2;
         gameOver = false;
+      
     }
 
-    //
     public void StartGame() // This method represents and indicates the control flows of the Connect Four Game.
     {
         Console.WriteLine("*****Welcome to Connect Four Game!*****");
@@ -101,18 +101,20 @@ class ConnectFour
                 int row = DropPiece(column, currentPlayer.Symbol); // this method is called to drop the player's symbol in the specified column.
                 if (IsWinningMove(row, column, currentPlayer.Symbol)) // this method is called to check if the player has won the game
                 {
+                    DisplayBoard();
                     Console.WriteLine($"\n[{currentPlayer.Name}] Wins! Congratulations!");// message is displayed if the player won the game
                     gameOver = true; // true if the player has won the game. 
                 }
                 else if (IsBoardFull()) // this method id used to check if the game board is full and there is no winner
                 {
+                    DisplayBoard();
                     Console.WriteLine("\nThe game is a draw.");
-                    gameOver = true; 
+                    gameOver = true;
                 }
                 else
                 {// If neither of the player wins nor the board is true, the turn switches to the next player and the "moveCount" is incremented.
                     currentPlayer = (currentPlayer == player1) ? player2 : player1;
-                    moveCount++; 
+                    moveCount++;
                 }
             }
             else
@@ -133,7 +135,7 @@ class ConnectFour
     {
         for (int row = 5; row >= 0; row--)
         {
-            if (board[row, column - 1] == '\0') 
+            if (board[row, column - 1] == '\0')
             {
                 board[row, column - 1] = symbol;
                 return row;
@@ -211,32 +213,30 @@ class ConnectFour
             for (int c = 0; c < 7; c++)
             {
                 if (board[r, c] == '\0')
-                    return false;
+                    return false; // There is an empty cell, game is not a draw
             }
         }
-        return true;
+        return true; // All cells are filled, game is a draw
     }
 
     private void DisplayBoard() // display the current state of the game board. The board is displayed as a grid of rows and columns separated by vertical lines ("|")
     {
-        Console.Write("");
-        for (int r = 0; r < 6; r++)
+        Console.WriteLine();
+        for (int row = 0; row <6; row++)
         {
-            Console.Write("|");
-            for (int c = 0; c < 7; c++)
+            Console.Write("| ");
+            for (int col = 0; col < 7; col++)
             {
-                Console.Write(board[r, c] + "|");
+                Console.Write($"{board[row, col]}| ");
             }
             Console.WriteLine();
         }
-        Console.WriteLine("--------------");
-        for (int col = 0; col < 7; col++)
-        {
-            Console.Write((col+ 1) + " ");
-        }
+        Console.WriteLine("----------------------");
+        Console.WriteLine("  1  2  3  4  5  6  7 ");
         Console.WriteLine();
 
     }
+
 }
 
 // Main program
