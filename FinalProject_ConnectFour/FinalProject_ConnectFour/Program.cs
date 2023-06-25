@@ -71,7 +71,7 @@ class ConnectFour
     private char[,] board; // is a character array representing the board game.
     private Player player1; // instances of the "Player" class and representing the player of the game
     private Player player2;
-    private bool gameOver; //boolean variable indicating wheter the game has ended or not.
+    private bool gameOver; //boolean variable indicating whether the game has ended or not.
 
     public ConnectFour(Player player1, Player player2)
     {
@@ -105,7 +105,7 @@ class ConnectFour
                     Console.WriteLine($"\n[{currentPlayer.Name}] Wins! Congratulations!");// message is displayed if the player won the game
                     gameOver = true; // true if the player has won the game. 
                 }
-                else if (IsBoardFull()) // this method id used to check if the game board is full and there is no winner
+                else if (IsBoardFull()) // this method is used to check if the game board is full and there is no winner
                 {
                     DisplayBoard();
                     Console.WriteLine("\nThe game is a draw.");
